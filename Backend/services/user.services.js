@@ -18,4 +18,8 @@ module.exports.createUser = async ({
      });
 
      return user;
-}
+};
+
+module.exports.findUserByEmail = async (email) => {
+  return userModel.findOne({ email }).select('+password');
+};

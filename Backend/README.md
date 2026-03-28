@@ -51,7 +51,7 @@ Raw JSON must follow standard rules: double-quoted keys and strings, no trailing
 }
 ```
 
-The `user` object is the Mongoose document as returned after creation (includes `_id`, `fullname`, `email`, etc.; password handling depends on schema `toJSON` transforms if any).
+The `user` object is the created user document with `_id`, `fullname`, `email`, etc. The **`password` field is not included** in the response.
 
 ---
 
@@ -64,6 +64,150 @@ The `user` object is the Mongoose document as returned after creation (includes 
 
 ---
 
+## `POST /user/login`
+
+Authenticates an existing user by email and password. On success, returns a JWT and the user document (without the password).
+
+**Path:** **`POST /user/login`** — same `/user` router mount as registration.
+
+| Item | Value |
+|------|--------|
+| **Method** | `POST` |
+| **Content-Type** | `application/json` |
+
+---
+
+### Request body (JSON)
+
+Fields validated by `express-validator` on this route:
+
+| Field | Required | Rules |
+|--------|-----------|--------|
+| `email` | Yes | Must be a valid email address. |
+| `password` | Yes | String, at least **6** characters. |
+
+**Example:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "hunter2"
+}
+```
+
+Use the same JSON rules as for registration (valid JSON, double-quoted keys).
+
+---
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "message": "User logged in successfully",
+  "token": "<JWT string>",
+  "user": { }
+}
+```
+
+The `user` object includes fields such as `_id`, `fullname`, and `email`. The **`password` is never returned**.
+
+The JWT is signed with `JWT_SECRET` and contains the user’s `_id` (same scheme as registration).
+
+---
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`400 Bad Request`** | Malformed JSON body **or** validation failed (`errors` array from Express Validator). |
+| **`401 Unauthorized`** | No user with that email, or password does not match. Response body: `{ "message": "Invalid email or password" }` (same message in both cases). |
+| **`500 Internal Server Error`** | Database or other unexpected errors if not handled by middleware. |
+
+---
+
 ### Environment
 
-JWT signing uses `JWT_SECRET` from your environment (see `.env`). Ensure the database connection is configured before calling this endpoint.
+JWT signing uses `JWT_SECRET` from your environment (see `.env`). Ensure the database connection is configured before calling these user endpoints.
+
+---
+
+## `GET /users/profile`
+
+Returns the authenticated user's profile. Requires a valid JWT.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required |
+
+### Headers
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | `Bearer <JWT token>` |
+
+You can also send the token as a cookie named `token`.
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "user": {
+    "_id": "...",
+    "fullname": {
+      "firstname": "Ada",
+      "lastname": "Lovelace"
+    },
+    "email": "user@example.com"
+  }
+}
+```
+
+The `password` field is never returned.
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`401 Unauthorized`** | No token provided, token is blacklisted, token is invalid/expired, or user not found. |
+
+---
+
+## `GET /users/logout`
+
+Logs out the authenticated user by blacklisting the current JWT. The token will be rejected on all future requests.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required |
+
+### Headers
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | `Bearer <JWT token>` |
+
+You can also send the token as a cookie named `token`.
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "message": "User logged out successfully"
+}
+```
+
+The `token` cookie is also cleared in the response.
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`401 Unauthorized`** | No token provided, token already blacklisted, or token is invalid/expired. |

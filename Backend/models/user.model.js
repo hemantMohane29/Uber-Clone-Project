@@ -29,8 +29,9 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET);
+userSchema.methods.generateAuthToken = async function () {
+  const token = jwt.sign({_id: this._id}, process.env.JWT_SECRET, { expiresIn: '24h' });
+  // await blacklistToken.create({ token });
   return token;
 };
 
