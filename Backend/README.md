@@ -291,3 +291,142 @@ The `password` field is never returned in the response.
 |--------|------|
 | **`400 Bad Request`** | Validation failed (`errors` array) or a captain with that email already exists (`{ "messages": "Captain already exist" }`). |
 | **`500 Internal Server Error`** | Database or unexpected server errors. |
+
+---
+
+## `POST /captains/login`
+
+Authenticates an existing captain. Returns a JWT and the captain document on success.
+
+| Item | Value |
+|------|--------|
+| **Method** | `POST` |
+| **Content-Type** | `application/json` |
+
+### Request body (JSON)
+
+| Field | Required | Rules |
+|-------|----------|-------|
+| `email` | Yes | Must be a valid email address. |
+| `password` | Yes | String, at least **6** characters. |
+
+**Example:**
+
+```json
+{
+  "email": "captain@example.com",
+  "password": "secret123"
+}
+```
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "message": "Captain logged in successfully",
+  "token": "<JWT string>",
+  "captain": {
+    "_id": "...",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "captain@example.com",
+    "status": "inactive",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`400 Bad Request`** | Validation failed (`errors` array). |
+| **`401 Unauthorized`** | No captain found with that email, or password does not match. |
+
+---
+
+## `GET /captains/profile`
+
+Returns the authenticated captain's profile. Requires a valid JWT.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required |
+
+### Headers
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | `Bearer <JWT token>` |
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "captain": {
+    "_id": "...",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "captain@example.com",
+    "status": "inactive",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+The `password` field is never returned.
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`401 Unauthorized`** | No token provided, token is blacklisted, or token is invalid/expired. |
+
+---
+
+## `GET /captains/logout`
+
+Logs out the authenticated captain by blacklisting the current JWT.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required |
+
+### Headers
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | `Bearer <JWT token>` |
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "message": "Captain logged out successfully"
+}
+```
+
+The `token` cookie is also cleared in the response.
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`400 Bad Request`** | No token provided in request. |
+| **`401 Unauthorized`** | Token is blacklisted or invalid/expired. |

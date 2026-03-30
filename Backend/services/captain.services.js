@@ -1,7 +1,5 @@
 const captainModel = require('../models/captain.model')
 
-
-
 module.exports.createCaptain = async ({
     firstname,
     lastname,
@@ -45,3 +43,9 @@ module.exports.createCaptain = async ({
 
 }
 
+
+
+
+module.exports.findCaptainByEmail = async (email) => {
+    return captainModel.findOne({ email }).select('+password');
+}
