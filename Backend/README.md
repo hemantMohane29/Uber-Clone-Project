@@ -211,3 +211,83 @@ The `token` cookie is also cleared in the response.
 | Status | When |
 |--------|------|
 | **`401 Unauthorized`** | No token provided, token already blacklisted, or token is invalid/expired. |
+
+---
+
+## `POST /captains/register`
+
+Registers a new captain with personal details and vehicle information. On success, returns a JWT and the created captain document.
+
+| Item | Value |
+|------|--------|
+| **Method** | `POST` |
+| **Content-Type** | `application/json` |
+
+---
+
+### Request body (JSON)
+
+| Field | Required | Rules |
+|-------|----------|-------|
+| `fullname.firstname` | Yes | String, at least **3** characters. |
+| `fullname.lastname` | Yes | String, at least **3** characters. |
+| `email` | Yes | Must be a valid email address. |
+| `password` | Yes | String, at least **6** characters. |
+| `vehicle.color` | Yes | String, at least **3** characters. |
+| `vehicle.plate` | Yes | String, at least **3** characters. |
+| `vehicle.capacity` | Yes | Integer, at least **1**. |
+| `vehicle.vehicleType` | Yes | One of: `car`, `motorcycle`, `auto`. |
+
+**Example:**
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "captain@example.com",
+  "password": "secret123",
+  "vehicle": {
+    "color": "black",
+    "plate": "AB1234",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+---
+
+### Success response
+
+**Status: `201 Created`**
+
+```json
+{
+  "token": "<JWT string>",
+  "captain": {
+    "_id": "...",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "captain@example.com",
+    "status": "inactive",
+    "vehicle": {
+      "color": "black",
+      "plate": "AB1234",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }
+}
+```
+
+The `password` field is never returned in the response.
+
+---
+
+### Error responses
+
+| Status | When |
+|--------|------|
+| **`400 Bad Request`** | Validation failed (`errors` array) or a captain with that email already exists (`{ "messages": "Captain already exist" }`). |
+| **`500 Internal Server Error`** | Database or unexpected server errors. |
