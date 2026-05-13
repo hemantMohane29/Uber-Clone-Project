@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 const CaptainProtectWrapper = ({ children }) => {
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
-  const [captain, setCaptain] = React.useContext(CaptainDataContext)
+  const { setCaptain } = React.useContext(CaptainDataContext)
   const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -28,7 +28,7 @@ const CaptainProtectWrapper = ({ children }) => {
       localStorage.removeItem('token')
       navigate('/captain-login')
     })
-  }, [token])
+  }, [token, navigate, setCaptain])
 
   if (isLoading) return <div>Loading...</div>
 

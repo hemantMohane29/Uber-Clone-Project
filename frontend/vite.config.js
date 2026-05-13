@@ -3,4 +3,23 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/maps': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/users': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/captains': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

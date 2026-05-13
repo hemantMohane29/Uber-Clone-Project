@@ -15,14 +15,18 @@ const UserLogout = () => {
     }).then((response) => {
       if (response.status === 200) {
         localStorage.removeItem('token')
+        localStorage.removeItem('userType')
+        localStorage.removeItem('userId')
         navigate('/login')
       }
     }).catch((error) => {
       console.error('Logout error:', error.response?.data || error.message)
       localStorage.removeItem('token')
+      localStorage.removeItem('userType')
+      localStorage.removeItem('userId')
       navigate('/login')
     })
-  }, [])
+  }, [navigate])
 
   return (
     <div>

@@ -54,7 +54,11 @@ module.exports.loginUser = async (req, res, next) => {
 
   const token = await user.generateAuthToken();
 
-  res.cookie('token', token);
+  res.cookie('token', token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false,
+  });
 
   const userSafe = user.toObject();
   delete userSafe.password;

@@ -1,5 +1,5 @@
 import React from 'react'
-import { UserDataContext } from '../context/Usercontext'
+import { UserDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 
 const UserProtectWrapper = ({ children }) => {
@@ -12,9 +12,9 @@ const UserProtectWrapper = ({ children }) => {
     if (!token) {
       navigate('/login')
     }
-  }, [token])
+  }, [token, navigate])
 
-//   if (!token) return null
+  //   if (!token) return null
 
   return (
     <div>

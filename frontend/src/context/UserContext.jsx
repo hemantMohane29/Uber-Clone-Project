@@ -1,26 +1,26 @@
-import React from 'react'
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useState } from 'react'
 
-export const UserDataContext = React.createContext()
+export const UserDataContext = createContext()
 
-const Usercontext = ({children}) => {
 
- const [user, setUser] = React.useState({
- 
-  email:'',
-  fullname:{
-    firstname:'',
-    lastname:''
-  }
-})
+const UserContext = ({ children }) => {
 
-  return (
-    
-    <div>
-         <UserDataContext.Provider value={[user, setUser]}>
-           {children}
-         </UserDataContext.Provider>
-    </div> 
-  )
+    const [user, setUser] = useState({
+        email: '',
+        fullName: {
+            firstName: '',
+            lastName: ''
+        }
+    })
+
+    return (
+        <div>
+            <UserDataContext.Provider value={{ user, setUser }}>
+                {children}
+            </UserDataContext.Provider>
+        </div>
+    )
 }
 
-export default Usercontext
+export default UserContext

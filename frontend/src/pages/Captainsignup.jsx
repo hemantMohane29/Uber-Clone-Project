@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useSocket } from '../context/SocketContext.jsx'
 import { CaptainDataContext } from '../context/CaptainContext'
 
 const Captainsignup = () => {
 
   const navigate = useNavigate()
-  const [captain, setCaptain] = React.useContext(CaptainDataContext)
+  const { joinSocket } = useSocket()
+  const { setCaptain } = React.useContext(CaptainDataContext)
 
   const [firstName, setFirstName] = React.useState('')
   const [lastName, setLastName] = React.useState('')
@@ -42,6 +44,9 @@ const Captainsignup = () => {
         const data = response.data
         setCaptain(data.captain)
         localStorage.setItem('token', data.token)
+        localStorage.setItem('userType', 'captain')
+        localStorage.setItem('userId', data.captain._id)
+        joinSocket(data.captain._id, 'captain')
         navigate('/captain-home')
       }
     } catch (error) {
@@ -61,7 +66,7 @@ const Captainsignup = () => {
   return (
     <div className='p-7 flex flex-col justify-between h-screen overflow-y-auto'>
       <div>
-        <img className='w-16 mb-10' src="https://pngimg.com/uploads/uber/uber_PNG24.png" alt="Uber Logo" />
+        <img className='w-20 mb-10' src="https://download.logo.wine/logo/Uber/Uber-Logo.wine.png" alt="Uber Logo" />
         <form onSubmit={submitHandler}>
 
           <h3 className='text-lg font-medium mb-2'>What's our Captain's name?</h3>
@@ -152,7 +157,7 @@ const Captainsignup = () => {
             Create Captain Account
           </button>
 
-          <p className='text-sm text-gray-600 text-center'>
+          <p className='text-sm mt-6 text-gray-600 text-center'>
             Already have an account? <Link to='/captain-login' className='text-blue-500'>Login here</Link>
           </p>
         </form>

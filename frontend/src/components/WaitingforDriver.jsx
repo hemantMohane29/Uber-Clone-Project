@@ -1,50 +1,44 @@
 import React from 'react'
 
-const WaitingforDriver = ({ setLookingForDriver }) => {
+const WaitingForDriver = (props) => {
   return (
-        <div className='px-3 py-6 relative'>
-      <h5
-        onClick={() => setLookingForDriver(false)}
-        className='absolute top-4 right-4 text-2xl cursor-pointer'
-      >
-        <i className="ri-arrow-down-s-line"></i>
-      </h5>
-
-      <h3 className='text-2xl font-semibold mb-5'>Looking for a Driver</h3>
+    <div>
+      <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
+        props.setWaitingForDriver(false)
+      }}><i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i></h5>
 
       <div className='flex items-center justify-between'>
-        <img className='h-24 animate-pulse object-contain'
-          src="https://cn-geo1.uber.com/image-proc/crop/resizecrop/udam/format=auto/width=956/height=538/srcb64=aHR0cHM6Ly90Yi1zdGF0aWMudWJlci5jb20vcHJvZC91ZGFtLWFzc2V0cy8yOWZiYjhiMC03NWIxLTRlMmEtODUzMy0zYTM2NGU3MDQyZmEucG5n"
-          alt="Car"/>
-          <div className='text-right'>
-            <h2 className='text-lg font-medium'>Hemant Mohane</h2>
-             <h4 className='text-md font-normal -mt-1'>MP 04 AB 4521</h4>
-              <p className='text-sm font-gray-600'>Maruti Swift</p>
-          </div>
+        <img className='h-12' src="https://swyft.pl/wp-content/uploads/2023/05/how-many-people-can-a-uberx-take.jpg" alt="" />
+        <div className='text-right'>
+          <h2 className='text-lg font-medium capitalize'>{props.ride?.captain?.fullname?.firstname}</h2>
+          <h4 className='text-xl font-semibold -mt-1 -mb-1'>{props.ride?.captain?.vehicle?.plate}</h4>
+          <p className='text-sm text-gray-600'>Maruti Suzuki Alto</p>
+          <h1 className='text-lg font-semibold'>{props.ride?.otp}</h1>
+        </div>
       </div>
 
-      <div className='w-full'>
-        <div className='flex items-center gap-5 p-3 border-b-2'>
-          <i className="text-lg ri-map-pin-user-fill"></i>
-          <div>
-            <h3 className='text-lg font-medium'>Pickup</h3>
-            <p className='text-sm -mt-1 text-gray-600'>Waiting for driver to accept</p>
+      <div className='flex gap-2 justify-between flex-col items-center'>
+        <div className='w-full mt-5'>
+          <div className='flex items-center gap-5 p-3 border-b-2'>
+            <i className="ri-map-pin-user-fill"></i>
+            <div>
+              <h3 className='text-lg font-medium'>562/11-A</h3>
+              <p className='text-sm -mt-1 text-gray-600'>{props.ride?.pickup}</p>
+            </div>
           </div>
-        </div>
-
-        <div className='flex items-center gap-5 p-3 border-b-2'>
-          <i className="text-lg ri-map-pin-fill"></i>
-          <div>
-            <h3 className='text-lg font-medium'>Destination</h3>
-            <p className='text-sm -mt-1 text-gray-600'>Your destination</p>
+          <div className='flex items-center gap-5 p-3 border-b-2'>
+            <i className="text-lg ri-map-pin-2-fill"></i>
+            <div>
+              <h3 className='text-lg font-medium'>562/11-A</h3>
+              <p className='text-sm -mt-1 text-gray-600'>{props.ride?.destination}</p>
+            </div>
           </div>
-        </div>
-
-        <div className='flex items-center gap-5 p-3'>
-          <i className="text-lg ri-cash-line"></i>
-          <div>
-            <h3 className='text-lg font-medium'>₹193</h3>
-            <p className='text-sm -mt-1 text-gray-600'>Cash</p>
+          <div className='flex items-center gap-5 p-3'>
+            <i className="ri-currency-line"></i>
+            <div>
+              <h3 className='text-lg font-medium'>₹{props.ride?.fare} </h3>
+              <p className='text-sm -mt-1 text-gray-600'>Cash Cash</p>
+            </div>
           </div>
         </div>
       </div>
@@ -52,4 +46,4 @@ const WaitingforDriver = ({ setLookingForDriver }) => {
   )
 }
 
-export default WaitingforDriver
+export default WaitingForDriver

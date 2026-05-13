@@ -1,16 +1,18 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { UserDataContext } from '../context/Usercontext'
+import { useSocket } from '../context/SocketContext.jsx'
+import { UserDataContext } from '../context/UserContext'
 
 const UserSignup = () => {
   const [firstName, setFirstName] = React.useState('')
+  const { joinSocket } = useSocket()
   const [lastName, setLastName] = React.useState('')
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
 
   const navigate = useNavigate()
-  const [user, setUser] = React.useContext(UserDataContext)
+  const { setUser } = React.useContext(UserDataContext)
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -31,6 +33,9 @@ const UserSignup = () => {
         const data = response.data
         setUser(data.user)
         localStorage.setItem('token', data.token)
+        localStorage.setItem('userType', 'user')
+        localStorage.setItem('userId', data.user._id)
+        joinSocket(data.user._id, 'user')
         navigate('/home')
       }
     } catch (error) {

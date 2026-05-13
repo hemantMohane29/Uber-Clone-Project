@@ -1,5 +1,65 @@
 # Backend API documentation
 
+## `GET /maps/get-suggestions`
+
+Returns Google Places autocomplete suggestions for a given input string.
+
+**Path:** **`GET /maps/get-suggestions?input=<text>`** — the maps router is mounted at `/maps` in `app.js`.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required (user or captain JWT via cookie `token` or `Authorization: Bearer <token>`) |
+
+### Query params
+
+| Param | Required | Rules |
+|-------|----------|-------|
+| `input` | Yes | String, at least 1 character |
+
+### Success response
+
+**Status: `200 OK`**
+
+The response is the Google Places Autocomplete payload. The UI uses `predictions[].description`.
+
+---
+
+## `GET /rides/get-fare`
+
+Calculates an estimated fare between a pickup and destination for each vehicle type.
+
+**Path:** **`GET /rides/get-fare?pickup=<text>&destination=<text>`** — the rides router is mounted at `/rides` in `app.js`.
+
+| Item | Value |
+|------|--------|
+| **Method** | `GET` |
+| **Auth** | Required (user JWT via cookie `token` or `Authorization: Bearer <token>`) |
+
+### Query params
+
+| Param | Required | Rules |
+|-------|----------|-------|
+| `pickup` | Yes | String, at least 3 characters |
+| `destination` | Yes | String, at least 3 characters |
+
+### Success response
+
+**Status: `200 OK`**
+
+```json
+{
+  "auto": 168,
+  "car": 251,
+  "moto": 132
+}
+```
+
+### Notes
+
+- The backend derives **distance** and **duration** using Google Maps and then applies base/per-km/per-minute rates.
+- Vehicle keys returned by the API are: **`auto`**, **`car`**, **`moto`**.
+
 ## `POST /user/register`
 
 Registers a new user in the database. The password is hashed before storage. On success, the API returns a JWT and the created user payload.
